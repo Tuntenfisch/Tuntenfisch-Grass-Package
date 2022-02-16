@@ -1,0 +1,11 @@
+{
+	"name": "com.tuntenfisch.grass",
+	"displayName": "Tuntenfisch Grass",
+	"description": "Procedural geometry grass shader with environment interaction for URP.",
+	"version": "1.0.0",
+	"unity": "2019.1"
+	"author": {
+		"name": "Tuntenfisch",
+		"url": "https://github.com/Tuntenfisch"
+	}
+}

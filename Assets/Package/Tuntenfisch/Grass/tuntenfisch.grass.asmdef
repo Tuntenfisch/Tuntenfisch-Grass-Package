@@ -1,0 +1,17 @@
+{
+    "name": "tuntenfisch.grass",
+    "rootNamespace": "",
+    "references": [
+        "GUID:853ac88e79ed876478866a9c080ca57d",
+        "GUID:d8b63aba1907145bea998dd612889d6b"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
