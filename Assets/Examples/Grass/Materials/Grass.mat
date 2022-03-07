@@ -1,5 +1,18 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-818297696024203537
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 5
 --- !u!21 &2100000
 Material:
   serializedVersion: 6
@@ -9,7 +22,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: Grass
   m_Shader: {fileID: 4800000, guid: 6aa1bd46582594b43b011f272760af40, type: 3}
-  m_ShaderKeywords: 
+  m_ShaderKeywords: _MESH_CONTAINS_BLADE_PROPERTIES
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -20,7 +33,15 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: 5a70106daa14dd94396e80df7e96a131, type: 3}
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BladePropertiesShapeTexture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BladePropertiesTexture:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BladeShapeTexture:
@@ -51,32 +72,8 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _GrassMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _InteractionColorRenderTexture:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _InteractionColorTexture:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _InteractionDepthRenderTexture:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _InteractionDepthTexture:
         m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _InteractionIntensityTexture:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _InteractionRenderTexture:
-        m_Texture: {fileID: 8400000, guid: b2bf2c1ed1d3d414a8c6ebc87ad0c309, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _InteractionTexture:
@@ -84,10 +81,6 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MainTexture:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -103,93 +96,103 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SpecGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _WindIntensityTexture:
         m_Texture: {fileID: 2800000, guid: d6d7cfe7f4589a84586bd0b01a49a120, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _WindMap:
+    - unity_Lightmaps:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _WindTexture:
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _BendDelta: 0.2
-    - _BladeBendCurve: 2
-    - _BladeBendDistance: 0.38
-    - _BladeBendStrength: 2
-    - _BladeHeight: 0.5
-    - _BladeHeightMax: 0.681
-    - _BladeHeightMin: 0.1
-    - _BladeSegments: 3
-    - _BladeSpread: 0.5
-    - _BladeWidth: 0.03
-    - _BladeWidthMax: 0.05
-    - _BladeWidthMin: 0.02
+    - _AlphaClip: 0
+    - _BladeBaseColorVariance: 0
+    - _BladeBendExponentVariance: 0.5
+    - _BladeBendVariance: 0.125
+    - _BladeHeightVariance: 0.25
+    - _BladePitchVariance: 7.5
+    - _BladePropertiesBaseColorVariance: 0
+    - _BladePropertiesBendExponentVariance: 0.5
+    - _BladePropertiesBendVariance: 0.125
+    - _BladePropertiesHeightVariance: 0.25
+    - _BladePropertiesPitchVariance: 7.5
+    - _BladePropertiesSpreadVariance: 0.125
+    - _BladePropertiesTipColorVariance: 0.025
+    - _BladePropertiesWidthVariance: 0.025
+    - _BladeSpreadVariance: 0.125
+    - _BladeTipColorVariance: 0.025
+    - _BladeWidthVariance: 0.025
+    - _Blend: 0
     - _BumpScale: 1
+    - _ClearCoatMask: 0
+    - _ClearCoatSmoothness: 0
+    - _Cull: 2
     - _Cutoff: 0.5
+    - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _GlossMapScale: 1
-    - _Glossiness: 0.5
-    - _GlossyReflections: 1
-    - _GrassFalloff: 0.05
-    - _GrassThreshold: 0.5
-    - _InteractionMaxTilt: 30
-    - _InteractionMaxTiltAngle: 30
+    - _EnvironmentReflections: 1
+    - _GlossMapScale: 0
+    - _Glossiness: 0
+    - _GlossyReflections: 0
     - _InteractionTilt: 30
-    - _InteractionTiltStrength: 0.1
+    - _MeshContainsBladeProperties: 1
+    - _MeshContainsGrassBladeProperties: 1
     - _Metallic: 0
-    - _Mode: 0
     - _OcclusionStrength: 1
-    - _Parallax: 0.02
+    - _Parallax: 0.005
+    - _QueueOffset: 0
+    - _ReceiveShadows: 1
+    - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _TessellationGrassDistance: 0.1
-    - _UVSec: 0
-    - _WindBendExponent: 2
+    - _Surface: 0
     - _WindDisplacement: 0.4
-    - _WindDisplacementStrength: 0.4
     - _WindFrequency: 0.2
-    - _WindMaxSpeed: 1
-    - _WindMaxTilt: 30
-    - _WindMaxTiltAngle: 30
     - _WindSpeed: 1
     - _WindTilt: 30
-    - _WindTiltStrength: 0.1
-    - _WindVelocity: 1
+    - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
-    - _BaseColor: {r: 0, g: 0.39607844, b: 0.07058818, a: 1}
-    - _BladeBaseColor: {r: 0.008568125, g: 0.12477186, b: 0.015208514, a: 1}
-    - _BladeBendExponentRange: {r: 1.5, g: 2.5, b: 2, a: 2}
+    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _BladeBaseColor: {r: 0, g: 0.39215687, b: 0, a: 1}
+    - _BladeBendExponentRange: {r: 1.5, g: 2.5, b: 0, a: 0}
     - _BladeBendRange: {r: 0, g: 0.25, b: 0, a: 0}
-    - _BladeBendStrength: {r: 0, g: 0, b: 0, a: 0}
-    - _BladeHeight: {r: 1, g: 1, b: 1, a: 1}
-    - _BladeHeightRange: {r: 0.5, g: 1, b: 1, a: 1}
+    - _BladeHeightRange: {r: 0.5, g: 1, b: 0, a: 0}
     - _BladePitchRange: {r: 0, g: 15, b: 0, a: 0}
-    - _BladeSpread: {r: 1, g: 1, b: 1, a: 1}
-    - _BladeSpreadRange: {r: 0.25, g: 0.5, b: 1, a: 1}
-    - _BladeTipColor: {r: 0.02069853, g: 0.2901961, b: 0, a: 1}
-    - _BladeWidth: {r: 0.5252067, g: 1.2579024, b: 1, a: 1}
-    - _BladeWidthRange: {r: 0.075, g: 0.1, b: 1, a: 1}
+    - _BladePropertiesBaseColor: {r: 0, g: 0.75, b: 0, a: 1}
+    - _BladePropertiesBendExponentRange: {r: 1.5, g: 2.5, b: 0, a: 0}
+    - _BladePropertiesBendRange: {r: 0, g: 0.25, b: 0, a: 0}
+    - _BladePropertiesHeightRange: {r: 0.5, g: 1, b: 0, a: 0}
+    - _BladePropertiesPitchRange: {r: 0, g: 15, b: 0, a: 0}
+    - _BladePropertiesPropertiesPitchRange: {r: 0, g: 15, b: 0, a: 0}
+    - _BladePropertiesSpreadRange: {r: 0.25, g: 0.5, b: 0, a: 0}
+    - _BladePropertiesTipColor: {r: 0, g: 1, b: 0, a: 1}
+    - _BladePropertiesWidthRange: {r: 0.05, g: 0.1, b: 0, a: 0}
+    - _BladeSpreadRange: {r: 0.25, g: 0.5, b: 0, a: 0}
+    - _BladeTipColor: {r: 0.2509804, g: 0.65882355, b: 0.2509804, a: 1}
+    - _BladeWidthRange: {r: 0.05, g: 0.1, b: 0, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _InteractionArea: {r: 10, g: 0.1, b: 0, a: 0}
     - _InteractionAreaSize: {r: 10, g: 0.1, b: 0, a: 0}
     - _InteractionCameraClippingPlanes: {r: 0.3, g: 100, b: 0, a: 0}
-    - _InteractionCameraZBufferParameters: {r: 0, g: 0, b: 0, a: 0}
-    - _TipColor: {r: 0, g: 0.47058827, b: 0.07058824, a: 1}
-    - _TopColor: {r: 0, g: 1, b: 0.2680149, a: 1}
-    - _WindDirection: {r: 1, g: 0, b: 0, a: 0}
+    - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _WindForwardDirection: {r: 0, g: 0, b: 1, a: 0}
     - _WindRightDirection: {r: 1, g: 0, b: 0, a: 0}
-    - _WindRotation: {r: -0, g: 0, b: 0, a: 0}
-    - _WindT: {r: 1, g: 0, b: 0, a: 0}
+    - _WindRotation: {r: 0, g: 0, b: 0, a: 0}
     - _WindUpDirection: {r: 0, g: 1, b: 0, a: 0}
-    - _WindVelocity: {r: 1, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []

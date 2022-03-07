@@ -12,12 +12,11 @@
       "depth": 0,
       "source": "git",
       "dependencies": {
-        "com.unity.animation.rigging": "1.1.1",
+        "com.unity.animation.rigging": "0.2.5",
         "com.unity.inputsystem": "1.3.0",
-        "com.unity.render-pipelines.universal": "12.1.4",
-        "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask#2.2.5"
+        "com.unity.render-pipelines.universal": "7.7.1"
       },
-      "hash": "c105c888b80c7a334c39c25d0cc751b9266f9d22"
+      "hash": "7c2bb32d9ad5d5758021dfcea0714dbf1743bc9f"
     },
     "com.unity.animation.rigging": {
       "version": "1.1.1",
@@ -39,11 +38,21 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.collab-proxy": {
-      "version": "1.15.12",
+      "version": "1.15.13",
       "depth": 0,
       "source": "registry",
       "dependencies": {
         "com.unity.services.core": "1.0.1"
+      },
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.collections": {
+      "version": "1.1.0",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.burst": "1.5.4",
+        "com.unity.test-framework": "1.1.29"
       },
       "url": "https://packages.unity.com"
     },
@@ -88,9 +97,19 @@
       },
       "url": "https://packages.unity.com"
     },
+    "com.unity.jobs": {
+      "version": "0.11.0-preview.6",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.collections": "1.0.0-pre.5",
+        "com.unity.mathematics": "1.2.1"
+      },
+      "url": "https://packages.unity.com"
+    },
     "com.unity.mathematics": {
       "version": "1.2.5",
-      "depth": 1,
+      "depth": 0,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"

@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aea5f0b85ab2ff14f84942d3b830de87, type: 3}
+  m_Name: Grass Painter Presets
+  m_EditorClassIdentifier: 
+  m_presets:
+  - Name: Short Green Grass
+    BladeProperties:
+      m_baseColor:
+        x: 0
+        y: 0.1274377
+        z: 0
+      m_tipColor:
+        x: 0.051269468
+        y: 0.39157256
+        z: 0.051269468
+      m_lightmapUV:
+        x: 0
+        y: 0
+      m_shapeIndex: 0
+      m_width: 0.075
+      m_height: 0.75
+      m_pitch: 7.5
+      m_bend: 0.125
+      m_bendExponent: 2
+      m_spread: 0.375
+  - Name: Tall Green Grass
+    BladeProperties:
+      m_baseColor:
+        x: 0
+        y: 0.1274377
+        z: 0
+      m_tipColor:
+        x: 0.051269468
+        y: 0.39157256
+        z: 0.051269468
+      m_lightmapUV:
+        x: 0
+        y: 0
+      m_shapeIndex: 0
+      m_width: 0.075
+      m_height: 2
+      m_pitch: 7.5
+      m_bend: 0.125
+      m_bendExponent: 2
+      m_spread: 0.375
