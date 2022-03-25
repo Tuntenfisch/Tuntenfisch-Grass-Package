@@ -125,16 +125,18 @@ namespace Tuntenfisch.Grass.Painter.Editor
                         return;
                     }
 
+                    GrassPainterPresets.Preset preset;
+
                     if (renameSelected)
                     {
-                        GrassPainterPresets.Preset preset = m_presetsArrayProperty.GetArrayElementAtIndex(SelectedPresetIndex).GetValue<GrassPainterPresets.Preset>();
+                        preset = new GrassPainterPresets.Preset { Name = text, BladeProperties = m_presetsArrayProperty.GetArrayElementAtIndex(SelectedPresetIndex).GetValue<GrassPainterPresets.Preset>().BladeProperties };
                         m_presetsArrayProperty.DeleteArrayElementAtIndex(SelectedPresetIndex);
-                        SelectedPresetIndex = AddOrUpdatePreset(new GrassPainterPresets.Preset { Name = text, BladeProperties = preset.BladeProperties });
                     }
                     else
                     {
-                        AddOrUpdatePreset(new GrassPainterPresets.Preset { Name = text, BladeProperties = m_grassPainter.BladeProperties });
+                        preset = new GrassPainterPresets.Preset { Name = text, BladeProperties = m_grassPainter.BladeProperties };
                     }
+                    SelectedPresetIndex = AddOrUpdatePreset(preset);
                     text = string.Empty;
                     break;
             }
@@ -153,6 +155,7 @@ namespace Tuntenfisch.Grass.Painter.Editor
                 return m_presetsArrayProperty.arraySize - 1;
             }
 
+            // Insert the new preset in alphabetical order.
             for (int presetIndex = 0; presetIndex < m_presetsArrayProperty.arraySize; presetIndex++)
             {
                 SerializedProperty presetProperty = m_presetsArrayProperty.GetArrayElementAtIndex(presetIndex);
@@ -205,9 +208,9 @@ namespace Tuntenfisch.Grass.Painter.Editor
         {
             GrassPainterPresets.Preset preset = presetProperty.GetValue<GrassPainterPresets.Preset>();
 
-            Rect rect = GUILayoutUtility.GetRect(0.0f, 0.0f, GUILayout.ExpandWidth(true), GUILayout.Height(EditorGUIIcons.IconSize.y + 2.0f * StaticStyle.Padding));
-            Rect backgroundRect = new Rect(rect).Pad(-StaticStyle.Padding);
-            Rect contentRect = new Rect(backgroundRect).Pad(-StaticStyle.Padding);
+            Rect rect = GUILayoutUtility.GetRect(0.0f, 0.0f, GUILayout.ExpandWidth(true), GUILayout.Height(EditorGUIIcons.IconSize.y + 2.0f * UnityEditor.EditorGUIUtility.standardVerticalSpacing));
+            Rect backgroundRect = new Rect(rect).Pad(-UnityEditor.EditorGUIUtility.standardVerticalSpacing);
+            Rect contentRect = new Rect(backgroundRect).Pad(-UnityEditor.EditorGUIUtility.standardVerticalSpacing);
             Rect labelRect = new Rect(contentRect.x, contentRect.y, EditorStyles.label.CalcSize(new GUIContent(preset.Name)).x, UnityEditor.EditorGUIUtility.singleLineHeight);
             Rect saveRect = new Rect(new float2(contentRect.xMax - EditorGUIIcons.IconSize.x, contentRect.y), EditorGUIIcons.IconSize);
 
@@ -239,8 +242,8 @@ namespace Tuntenfisch.Grass.Painter.Editor
         {
             Rect rect = GUILayoutUtility.GetRect(0.0f, 0.0f, GUILayout.ExpandWidth(true), GUILayout.Height(EditorGUIIcons.IconSize.y));
             Rect backgroundRect = Rect.MinMaxRect(rect.xMax - 10.0f - EditorGUIIcons.IconSize.x, rect.yMin, rect.xMax - 10.0f, rect.yMax);
-            Rect contentRect = new Rect(backgroundRect).Pad(-StaticStyle.Padding);
-            contentRect.y -= 0.5f * StaticStyle.Padding;
+            Rect contentRect = new Rect(backgroundRect).Pad(-UnityEditor.EditorGUIUtility.standardVerticalSpacing);
+            contentRect.y -= 0.5f * UnityEditor.EditorGUIUtility.standardVerticalSpacing;
 
             if (Event.current.type == EventType.Repaint)
             {
@@ -254,15 +257,6 @@ namespace Tuntenfisch.Grass.Painter.Editor
                 SelectedPresetIndex = -1;
             }
             UnityEditor.EditorGUI.EndDisabledGroup();
-        }
-        #endregion
-
-        #region Private Structs, Classes and Enums
-        private static class StaticStyle
-        {
-            #region Public Fields
-            public const float Padding = 4.0f;
-            #endregion
         }
         #endregion
     }

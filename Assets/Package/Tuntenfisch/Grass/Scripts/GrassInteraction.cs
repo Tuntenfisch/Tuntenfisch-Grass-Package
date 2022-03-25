@@ -1,6 +1,9 @@
 ﻿using System;
 using Tuntenfisch.Commons.Coupling.Variables;
 using Unity.Mathematics;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -28,7 +31,7 @@ namespace Tuntenfisch.Grass
         #endregion
 
         #region Private Fields
-        private const float c_debugTextureSize = 0.2f;
+        private const float c_debugTextureSizePercentage = 0.2f;
         private RenderTexture m_interactionRenderTexture;
         private RenderTexture m_interactionDepthRenderTexture;
         private Material m_copyDepthMaterial;
@@ -46,6 +49,9 @@ namespace Tuntenfisch.Grass
             m_copyDepthMaterial = Resources.Load<Material>("Materials/CopyDepthMaterial");
             RenderPipelineManager.endCameraRendering += CopyDepth;
             m_grassMaterial.EnableKeyword(GrassShader.GrassInteractionEnabled);
+#if UNITY_EDITOR
+            SceneView.duringSceneGui += OnSceneGUI;
+#endif
         }
 
         private void LateUpdate()
@@ -59,6 +65,9 @@ namespace Tuntenfisch.Grass
 
         private void OnDestroy()
         {
+#if UNITY_EDITOR
+            SceneView.duringSceneGui -= OnSceneGUI;
+#endif
             m_grassMaterial.DisableKeyword(GrassShader.GrassInteractionEnabled);
             RenderPipelineManager.endCameraRendering -= CopyDepth;
             ReleaseRenderTextures(Camera);
@@ -77,24 +86,24 @@ namespace Tuntenfisch.Grass
         }
 
 #if UNITY_EDITOR
-        private void OnGUI()
+        private void OnSceneGUI(SceneView sceneView)
         {
-            if (!m_drawInteractionRenderTexture || Event.current.type != EventType.Repaint)
+            if (!m_drawInteractionRenderTexture)
             {
                 return;
             }
-            float textureSize = math.lerp(0.0f, Screen.height, c_debugTextureSize);
+            Handles.BeginGUI();
+            float textureSize = math.lerp(0.0f, Screen.height, c_debugTextureSizePercentage);
             Rect interactionRect = new Rect(0.0f, 0.0f, textureSize, textureSize);
             Rect interactionDepthRect = new Rect(textureSize, 0.0f, textureSize, textureSize);
             GUI.DrawTexture(interactionRect, m_interactionRenderTexture);
             GUI.DrawTexture(interactionDepthRect, m_interactionDepthRenderTexture);
+            Handles.EndGUI();
         }
 #endif
         #endregion
 
         #region Private Methods
-
-
         private void CreateRenderTextures(Camera camera)
         {
             if (camera == null)

@@ -167,6 +167,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 89033584}
+  - component: {fileID: 89033586}
   - component: {fileID: 89033583}
   - component: {fileID: 89033582}
   - component: {fileID: 89033585}
@@ -276,6 +277,25 @@ MonoBehaviour:
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
   m_Version: 2
+--- !u!114 &89033586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 89033581}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03eae70eb7ec0d5429288e1861c9b1f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_variableType: 0
+  m_cameraVariable: {fileID: 11400000, guid: 3273c1f65ec190349830ec623fc2bdce, type: 2}
+  m_cameraValue: {fileID: 89033583}
+  m_gameObjectVariable: {fileID: 0}
+  m_gameObjectValue: {fileID: 0}
+  m_transformVariable: {fileID: 0}
+  m_transformValue: {fileID: 0}
 --- !u!1 &180676255
 GameObject:
   m_ObjectHideFlags: 0
@@ -652,6 +672,7 @@ GameObject:
   - component: {fileID: 1478624125}
   - component: {fileID: 1478624122}
   - component: {fileID: 1478624121}
+  - component: {fileID: 1478624126}
   - component: {fileID: 1478624124}
   - component: {fileID: 1478624123}
   m_Layer: 0
@@ -716,11 +737,11 @@ MonoBehaviour:
     m_literalValue: {fileID: 2030643492}
     m_useLiteral: 0
     m_variable: {fileID: 11400000, guid: 72551544dad376d468a24b7ed40896fb, type: 2}
-  m_renderTextureResolution: 512
+  m_renderTextureResolution: 1024
   m_interactionLayer:
     serializedVersion: 2
     m_Bits: 8
-  m_drawInteractionRenderTexture: 0
+  m_drawInteractionRenderTexture: 1
 --- !u!23 &1478624123
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -783,13 +804,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 163131b83cc734945aedf6f3fb0335d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_grassClusterCapacity: 16384
+  m_grassClusterCapacity: 65536
   m_grassClusterCount: 0
   m_brushProperties:
     m_raycastLayer:
       serializedVersion: 2
-      m_Bits: 2147483647
-    m_radius: 4
+      m_Bits: 64
+    m_radius: 5
     m_density: 1.5
     m_smoothing: 0.5
   m_bladeProperties:
@@ -813,6 +834,26 @@ MonoBehaviour:
     m_spread: 0.375
   m_presets: {fileID: 11400000, guid: 52f013f08e5c9e54a8c088fc082a9dda, type: 2}
   m_serializedMesh: []
+--- !u!114 &1478624126
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1478624116}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e03c5c2492bb3147ad4c1cbb29ec468, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_grassMaterial: {fileID: 2100000, guid: 0baf0c270d0795541bfdee9198e1aad8, type: 2}
+  m_cullingCamera:
+    m_literalValue: {fileID: 0}
+    m_useLiteral: 0
+    m_variable: {fileID: 11400000, guid: 3273c1f65ec190349830ec623fc2bdce, type: 2}
+  m_smoothDistanceCullingRange:
+    x: 100
+    y: 400
 --- !u!1 &1509031663
 GameObject:
   m_ObjectHideFlags: 0
@@ -1156,10 +1197,10 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 100
+  far clip plane: 12
   field of view: 26.991467
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 20
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2

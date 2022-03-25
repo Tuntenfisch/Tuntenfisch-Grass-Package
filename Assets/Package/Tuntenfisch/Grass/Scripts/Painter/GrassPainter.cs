@@ -1,4 +1,5 @@
 ﻿using System;
+using Tuntenfisch.Commons.Collections.Native;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
@@ -24,9 +25,13 @@ namespace Tuntenfisch.Grass.Painter
         {
             get
             {
-                if (m_mesh == null)
+                if (m_mesh == null || m_mesh.vertexCount != m_grassClusterCapacity)
                 {
-                    NativeArray<int> indices = new NativeArray<int>(m_grassClusterCapacity, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
+                    if (MeshFilter.sharedMesh != null)
+                    {
+                        SecureDestroyOrDestroyImmediate(MeshFilter.sharedMesh);
+                    }
+                    using NativeArray<int> indices = new NativeArray<int>(m_grassClusterCapacity, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
                     InitializeIndicesJob initializeIndicesJob = new InitializeIndicesJob { Indices = indices };
                     initializeIndicesJob.Run(indices.Length);
 
@@ -36,12 +41,6 @@ namespace Tuntenfisch.Grass.Painter
                     m_mesh.SetIndexBufferParams(indices.Length, IndexFormat.UInt32);
                     m_mesh.SetIndexBufferData(indices, 0, 0, indices.Length);
 
-                    indices.Dispose();
-
-                    if (MeshFilter.sharedMesh != null)
-                    {
-                        SecureDestroyOrDestroyImmediate(MeshFilter.sharedMesh);
-                    }
                     MeshFilter.sharedMesh = MeshFilter.mesh = m_mesh;
                 }
                 return m_mesh;
@@ -96,12 +95,10 @@ namespace Tuntenfisch.Grass.Painter
         [HideInInspector]
         [SerializeField]
         private int m_grassClusterCount;
-
         [Header("Brush Properties")]
         [Commons.Attributes.InlineField]
         [SerializeField]
         private GrassBrushProperties m_brushProperties = new GrassBrushProperties(1, 1.0f, 2.5f, 0.25f, GrassPainterMode.None);
-
         [SerializeField]
         private GrassBladeProperties m_bladeProperties = new GrassBladeProperties(new Color32(0, 100, 0, 255), new Color32(64, 168, 64, 255), 0.0f, 0, 0.075f, 0.75f, 7.5f, 0.125f, 2.0f, 0.375f);
         [HideInInspector]
@@ -151,19 +148,19 @@ namespace Tuntenfisch.Grass.Painter
         #endregion
 
         #region Public Methods
-        public void SetMaxGrassClusterCount(int maxGrassClusterCount, bool force = false)
+        public void SetGrassClusterCapacity(int grassClusterCapacity, bool force = false)
         {
-            if (maxGrassClusterCount < m_grassClusterCount)
+            if (grassClusterCapacity < m_grassClusterCount)
             {
                 if (!force)
                 {
-                    throw new ArgumentException($"Max grass cluster count is smaller than current grass cluster count. Parts of the mesh would be lost.", nameof(maxGrassClusterCount));
+                    throw new ArgumentException($"Grass cluster capacity is smaller than current grass cluster count. Parts of the mesh would be lost.", nameof(grassClusterCapacity));
                 }
-                m_serializedMesh = Vertices.AsArray().Slice(0, maxGrassClusterCount).ToArray();
+                m_serializedMesh = Vertices.AsArray().Slice(0, grassClusterCapacity).ToArray();
                 Clear(ClearGrassFlags.RuntimeGrass);
                 UpdateGrassMeshExplicitly();
             }
-            m_grassClusterCapacity = maxGrassClusterCount;
+            m_grassClusterCapacity = grassClusterCapacity;
         }
 
         public void SetBrushProperties(LayerMask? raycastLayer = null, float? radius = null, float? density = null, float? smoothing = null, GrassPainterMode? mode = null)
@@ -195,8 +192,12 @@ namespace Tuntenfisch.Grass.Painter
                     RemoveGrass(brushPosition);
                     break;
 
-                case GrassPainterMode.Modify:
-                    ModifyGrass(brushPosition);
+                case GrassPainterMode.Replace:
+                    ReplaceGrass(brushPosition);
+                    break;
+
+                case GrassPainterMode.Copy:
+                    CopyGrass(brushPosition);
                     break;
 
                 default:
@@ -287,7 +288,7 @@ namespace Tuntenfisch.Grass.Painter
             // But according to
             // https://forum.unity.com/threads/request-raycastcommand-schedulebatch-with-asdeferredjobarray-support.643261/
             // RaycastCommand.ScheduleBatch() doesn't support this as of now.
-            NativeArray<RaycastCommand> raycastCommands = new NativeArray<RaycastCommand>(maxRaycasts, Allocator.TempJob);
+            using NativeArray<RaycastCommand> raycastCommands = new NativeArray<RaycastCommand>(maxRaycasts, Allocator.TempJob);
 
             // Schedule the job for creating the raycasts.
             JobHandle jobHandle = new CreateRaycastCommandsJob
@@ -297,7 +298,7 @@ namespace Tuntenfisch.Grass.Painter
                 RaycastCommands = raycastCommands
             }.Schedule(maxRaycasts, c_innterLoopBatchCount);
 
-            NativeArray<RaycastHit> hits = new NativeArray<RaycastHit>(maxRaycasts, Allocator.TempJob);
+            using NativeArray<RaycastHit> hits = new NativeArray<RaycastHit>(maxRaycasts, Allocator.TempJob);
             // Schedule the job for doing the actual raycasting.
             jobHandle = RaycastCommand.ScheduleBatch(raycastCommands, hits, c_innterLoopBatchCount, jobHandle);
 
@@ -316,16 +317,13 @@ namespace Tuntenfisch.Grass.Painter
             // on all jobs declared before, all of them will be completed.
             jobHandle.Complete();
 
-            // In the end we dispose of the native arrays we created and update the grass mesh.
-            raycastCommands.Dispose();
-            hits.Dispose();
+            // In the end we update the grass mesh.
             UpdateGrassMeshExplicitly();
         }
 
         private void RemoveGrass(float3 brushPosition)
         {
-            NativeList<GrassVertex> OutputVertices = new NativeList<GrassVertex>(Vertices.Length, Allocator.TempJob);
-
+            using NativeList<GrassVertex> OutputVertices = new NativeList<GrassVertex>(Vertices.Length, Allocator.TempJob);
             JobHandle jobHandle = new RemoveGrassJob
             {
                 BrushPositionOS = transform.InverseTransformPoint(brushPosition),
@@ -337,13 +335,12 @@ namespace Tuntenfisch.Grass.Painter
             jobHandle.Complete();
             Vertices.Resize(OutputVertices.Length, NativeArrayOptions.UninitializedMemory);
             NativeArray<GrassVertex>.Copy(OutputVertices, Vertices, OutputVertices.Length);
-            OutputVertices.Dispose();
             UpdateGrassMeshExplicitly();
         }
 
-        private void ModifyGrass(float3 brushPosition)
+        private void ReplaceGrass(float3 brushPosition)
         {
-            JobHandle jobHandle = new ModifyGrassJob
+            JobHandle jobHandle = new ReplaceGrassJob
             {
                 BrushPositionOS = transform.InverseTransformPoint(brushPosition),
                 BrushProperties = BrushProperties,
@@ -353,6 +350,25 @@ namespace Tuntenfisch.Grass.Painter
 
             jobHandle.Complete();
             UpdateGrassMeshExplicitly();
+        }
+
+        private void CopyGrass(float3 brushPosition)
+        {
+            using NativeLock @lock = new NativeLock(Allocator.TempJob);
+            using NativeReference<GrassBladeProperties> bladeProperties = new NativeReference<GrassBladeProperties>(BladeProperties, Allocator.TempJob);
+            using NativeReference<float> currentDistanceSquared = new NativeReference<float>(float.MaxValue, Allocator.TempJob);
+
+            JobHandle jobHandle = new CopyGrassJob
+            {
+                BrushPositionOS = transform.InverseTransformPoint(brushPosition),
+                Vertices = Vertices,
+                Lock = @lock,
+                BladeProperties = bladeProperties,
+                CurrentDistanceSquared = currentDistanceSquared
+            }.Schedule(Vertices.Length, c_innterLoopBatchCount);
+
+            jobHandle.Complete();
+            SetBladeProperties(bladeProperties.Value);
         }
 
         private void SecureDestroyOrDestroyImmediate(UnityEngine.Object obj)
@@ -378,7 +394,8 @@ namespace Tuntenfisch.Grass.Painter
             None,
             Add,
             Remove,
-            Modify
+            Replace,
+            Copy
         }
 
         [Flags]

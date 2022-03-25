@@ -9,6 +9,7 @@ namespace Tuntenfisch.Grass
 
         // Keywords
         public static readonly string GrassInteractionEnabled = "_GRASS_INTERACTION_ENABLED";
+        public static readonly string DistanceCullingEnabled = "_DISTANCE_CULLING_ENABLED";
         public static readonly string MeshContainsBladeProperties = "_MESH_CONTAINS_BLADE_PROPERTIES";
 
         // Blade Properties
@@ -43,6 +44,10 @@ namespace Tuntenfisch.Grass
         public static readonly int InteractionTilt = Shader.PropertyToID("_InteractionTilt");
         public static readonly int InteractionToWorldTransform = Shader.PropertyToID("_InteractionToWorldTransform");
         public static readonly int WorldToInteractionTransform = Shader.PropertyToID("_WorldToInteractionTransform");
+
+        // Distance Culling Properties
+        public static readonly int CullingCameraPosition = Shader.PropertyToID("_CullingCameraPosition");
+        public static readonly int SmoothDistanceCullingRange = Shader.PropertyToID("_SmoothDistanceCullingRange");
 
         // Wind Properties
         public static readonly int WindRotation = Shader.PropertyToID("_WindRotation");

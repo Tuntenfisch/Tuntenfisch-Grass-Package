@@ -33,6 +33,26 @@ MonoBehaviour:
       m_bend: 0.125
       m_bendExponent: 2
       m_spread: 0.375
+  - Name: Short Red Grass
+    BladeProperties:
+      m_baseColor:
+        x: 0.1274377
+        y: 0.007859951
+        z: 0
+      m_tipColor:
+        x: 0.39157256
+        y: 0.1281983
+        z: 0.05126948
+      m_lightmapUV:
+        x: 0
+        y: 0
+      m_shapeIndex: 0
+      m_width: 0.075
+      m_height: 0.75
+      m_pitch: 7.5
+      m_bend: 0.125
+      m_bendExponent: 2
+      m_spread: 0.375
   - Name: Tall Green Grass
     BladeProperties:
       m_baseColor:
@@ -43,6 +63,26 @@ MonoBehaviour:
         x: 0.051269468
         y: 0.39157256
         z: 0.051269468
+      m_lightmapUV:
+        x: 0
+        y: 0
+      m_shapeIndex: 0
+      m_width: 0.075
+      m_height: 2
+      m_pitch: 7.5
+      m_bend: 0.125
+      m_bendExponent: 2
+      m_spread: 0.375
+  - Name: Tall Red Grass
+    BladeProperties:
+      m_baseColor:
+        x: 0.1274377
+        y: 0.008023192
+        z: 0
+      m_tipColor:
+        x: 0.39157256
+        y: 0.1274377
+        z: 0.051269453
       m_lightmapUV:
         x: 0
         y: 0

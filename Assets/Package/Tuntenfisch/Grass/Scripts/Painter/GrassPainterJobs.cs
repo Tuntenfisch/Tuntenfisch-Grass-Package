@@ -1,5 +1,7 @@
-﻿using Unity.Burst;
+﻿using Tuntenfisch.Commons.Collections.Native;
+using Unity.Burst;
 using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
@@ -147,7 +149,7 @@ namespace Tuntenfisch.Grass.Painter
     }
 
     [BurstCompile]
-    public struct ModifyGrassJob : IJobParallelFor
+    public struct ReplaceGrassJob : IJobParallelFor
     {
         #region Public Fields
         public float3 BrushPositionOS;
@@ -169,6 +171,41 @@ namespace Tuntenfisch.Grass.Painter
             }
             GrassBladeProperties bladeProperties = GrassBladeProperties.Lerp(vertex.BladeProperties, BladeProperties, smoothingFactor);
             Vertices[index] = new GrassVertex(vertex.PositionOS, vertex.NormalOS, vertex.TangentOS, bladeProperties);
+        }
+        #endregion
+    }
+
+    [BurstCompile]
+    public unsafe struct CopyGrassJob : IJobParallelFor
+    {
+        #region Public Fields
+        public float3 BrushPositionOS;
+
+        [ReadOnly]
+        public NativeArray<GrassVertex> Vertices;
+        [WriteOnly]
+        public NativeLock Lock;
+        [WriteOnly]
+        [NativeDisableContainerSafetyRestriction]
+        public NativeReference<GrassBladeProperties> BladeProperties;
+        [NativeDisableContainerSafetyRestriction]
+        public NativeReference<float> CurrentDistanceSquared;
+        #endregion
+
+        #region Public Methods
+        public void Execute(int index)
+        {
+            GrassVertex vertex = Vertices[index];
+            float distanceSquared = math.lengthsq(vertex.PositionOS - BrushPositionOS);
+
+            Lock.Acquire();
+
+            if (distanceSquared < CurrentDistanceSquared.Value)
+            {
+                CurrentDistanceSquared.Value = distanceSquared;
+                BladeProperties.Value = vertex.BladeProperties;
+            }
+            Lock.Release();
         }
         #endregion
     }

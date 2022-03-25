@@ -163,7 +163,7 @@ namespace Tuntenfisch.Grass.Painter.Editor
                 case EventType.Repaint:
                     if (HasFlags(GrassPainterEditorFlags.Hit))
                     {
-                        DisplayBrush();
+                        DrawBrush();
                     }
                     break;
 
@@ -227,7 +227,7 @@ namespace Tuntenfisch.Grass.Painter.Editor
             {
                 try
                 {
-                    GrassPainter.SetMaxGrassClusterCount(maxGrassClusterCount);
+                    GrassPainter.SetGrassClusterCapacity(maxGrassClusterCount);
                 }
                 catch (ArgumentException exception)
                 {
@@ -235,7 +235,7 @@ namespace Tuntenfisch.Grass.Painter.Editor
 
                     if (AskForConfirmation($"Cannot set {ObjectNames.NicifyVariableName(nameof(GrassPainter.GrassClusterCapacity)).ToLower()}. {message}\nDo you want to set it anyways?"))
                     {
-                        GrassPainter.SetMaxGrassClusterCount(maxGrassClusterCount, force: true);
+                        GrassPainter.SetGrassClusterCapacity(maxGrassClusterCount, force: true);
                     }
                 }
             }
@@ -244,14 +244,15 @@ namespace Tuntenfisch.Grass.Painter.Editor
         private void DisplayGrassPainterButtons()
         {
             EditorGUILayout.BeginHorizontal();
-            DisplayGrassPainterButton(GrassPainter.GrassPainterMode.Add);
-            DisplayGrassPainterButton(GrassPainter.GrassPainterMode.Remove);
-            DisplayGrassPainterButton(GrassPainter.GrassPainterMode.Modify);
+            DisplayGrassPainterButton(GrassPainter.GrassPainterMode.Add, StaticStyle.AddButtonLabel);
+            DisplayGrassPainterButton(GrassPainter.GrassPainterMode.Remove, StaticStyle.RemoveButtonLabel);
+            DisplayGrassPainterButton(GrassPainter.GrassPainterMode.Replace, StaticStyle.ReplaceButtonLabel);
+            DisplayGrassPainterButton(GrassPainter.GrassPainterMode.Copy, StaticStyle.CopyButtonLabel);
             EditorGUILayout.EndHorizontal();
 
             if (GUILayout.Button(ObjectNames.NicifyVariableName(nameof(GrassPainter.Clear))))
             {
-                if (AskForConfirmation("Clearing the grass cannot be undone.\n\nDo you want to proceed?"))
+                if (AskForConfirmation("Clearing the grass mesh cannot be undone.\n\nDo you want to proceed?"))
                 {
                     GrassPainter.Clear();
                     Undo.ClearUndo(GrassPainter);
@@ -259,10 +260,10 @@ namespace Tuntenfisch.Grass.Painter.Editor
             }
         }
 
-        private void DisplayGrassPainterButton(GrassPainter.GrassPainterMode mode)
+        private void DisplayGrassPainterButton(GrassPainter.GrassPainterMode mode, GUIContent label)
         {
             EditorGUI.BeginChangeCheck();
-            bool isToggled = GUILayout.Toggle(mode == Mode, mode.ToString(), "Button");
+            bool isToggled = GUILayout.Toggle(mode == Mode, label, "Button");
 
             if (EditorGUI.EndChangeCheck())
             {
@@ -277,17 +278,18 @@ namespace Tuntenfisch.Grass.Painter.Editor
 
             do
             {
-                if (property.name == "m_Script")
+                switch (property.name)
                 {
-                    continue;
-                }
-                else if (property.name == "m_bladeProperties")
-                {
-                    DisplayBladeProperties(property.Copy());
-                }
-                else
-                {
-                    EditorGUILayout.PropertyField(property, true);
+                    case "m_Script":
+                        break;
+
+                    case "m_bladeProperties":
+                        DisplayBladeProperties(property.Copy());
+                        break;
+
+                    default:
+                        EditorGUILayout.PropertyField(property, true);
+                        break;
                 }
             } while (property.NextVisible(false));
         }
@@ -303,13 +305,20 @@ namespace Tuntenfisch.Grass.Painter.Editor
 
             do
             {
-                if (bladePropertiesProperty.name == "m_shapeIndex")
+                switch (bladePropertiesProperty.name)
                 {
-                    DisplayShapeIndex(bladePropertiesProperty);
-                }
-                else
-                {
-                    EditorGUILayout.PropertyField(bladePropertiesProperty, true);
+                    case "m_baseColor":
+                    case "m_tipColor":
+                        DisplayColor(bladePropertiesProperty);
+                        break;
+
+                    case "m_shapeIndex":
+                        DisplayShapeIndex(bladePropertiesProperty);
+                        break;
+
+                    default:
+                        EditorGUILayout.PropertyField(bladePropertiesProperty, true);
+                        break;
                 }
             }
             while (bladePropertiesProperty.NextVisible(false) && bladePropertiesProperty.depth != parentDepth);
@@ -318,6 +327,11 @@ namespace Tuntenfisch.Grass.Painter.Editor
             {
                 m_presetsDrawer.DeselectPreset();
             }
+        }
+
+        private void DisplayColor(SerializedProperty colorProperty)
+        {
+            EditorGUILayout.PropertyField(colorProperty, true);
         }
 
         private void DisplayShapeIndex(SerializedProperty shapeIndexProperty)
@@ -371,12 +385,12 @@ namespace Tuntenfisch.Grass.Painter.Editor
             EditorGUILayout.EndHorizontal();
         }
 
-        private void DisplayBrush()
+        private void DrawBrush()
         {
-            // Draw brush fill.
+            // Draw brush fill for smoothing radius.
             Color brushColor = StaticStyle.GetBrushColor(Mode);
             Handles.color = brushColor;
-            Handles.DrawSolidDisc(m_hit.CurrentHit.point, m_hit.CurrentHit.normal, GrassPainter.BrushProperties.Radius);
+            Handles.DrawSolidDisc(m_hit.CurrentHit.point, m_hit.CurrentHit.normal, GrassPainter.BrushProperties.SmoothingRadius);
 
             // Draw brush edge.
             brushColor.a = 1.0f;
@@ -406,9 +420,9 @@ namespace Tuntenfisch.Grass.Painter.Editor
             return EditorUtility.DisplayDialog("Confirmation Dialog", message, "Yes", "No");
         }
 
-        private bool HasFlags(GrassPainterEditorFlags flags, bool all = false) => all ? (m_flags & flags) == flags : (m_flags & flags) != 0;
+        private bool HasFlags(GrassPainterEditorFlags flags, bool all = false) => all ? (Flags & flags) == flags : (Flags & flags) != 0;
 
-        private void SetFlags(GrassPainterEditorFlags flags, bool set) => m_flags = set ? m_flags | flags : m_flags & ~flags;
+        private void SetFlags(GrassPainterEditorFlags flags, bool set) => Flags = set ? Flags | flags : Flags & ~flags;
         #endregion
 
         #region Private Structs, Classes and Enums
@@ -431,15 +445,19 @@ namespace Tuntenfisch.Grass.Painter.Editor
         {
             #region Public Fields
             public static readonly string[] OpenBladeShapeEditorPopupOptions;
-            #endregion
-
-            #region Private Fields
-            private const float s_alpha = 0.1f;
+            public static readonly GUIContent AddButtonLabel;
+            public static readonly GUIContent RemoveButtonLabel;
+            public static readonly GUIContent ReplaceButtonLabel;
+            public static readonly GUIContent CopyButtonLabel;
             #endregion
 
             static StaticStyle()
             {
                 OpenBladeShapeEditorPopupOptions = new string[] { $"Open {GrassBladeShapeEditor.Name}" };
+                AddButtonLabel = EditorGUIUtility.IconContent("Grid.PaintTool", $"|{GrassPainter.GrassPainterMode.Add}");
+                RemoveButtonLabel = EditorGUIUtility.IconContent("Grid.EraserTool", $"|{GrassPainter.GrassPainterMode.Remove}");
+                ReplaceButtonLabel = EditorGUIUtility.IconContent("preAudioLoopOff", $"|{GrassPainter.GrassPainterMode.Replace}");
+                CopyButtonLabel = EditorGUIUtility.IconContent("Grid.PickingTool", $"|{GrassPainter.GrassPainterMode.Copy}");
             }
 
             #region Public Methods
@@ -447,10 +465,11 @@ namespace Tuntenfisch.Grass.Painter.Editor
             {
                 return mode switch
                 {
-                    GrassPainter.GrassPainterMode.Add => new Color(0.0f, 1.0f, 0.0f, s_alpha),
-                    GrassPainter.GrassPainterMode.Remove => new Color(1.0f, 0.0f, 0.0f, s_alpha),
-                    GrassPainter.GrassPainterMode.Modify => new Color(1.0f, 0.65f, 0.0f, s_alpha),
-                    _ => new Color(0.0f, 0.0f, 0.0f, 0.0f)
+                    GrassPainter.GrassPainterMode.Add => new Color(0.0f, 1.0f, 0.0f, 0.1f),
+                    GrassPainter.GrassPainterMode.Remove => new Color(1.0f, 0.0f, 0.0f, 0.2f),
+                    GrassPainter.GrassPainterMode.Replace => new Color(1.0f, 0.65f, 0.0f, 0.2f),
+                    GrassPainter.GrassPainterMode.Copy => new Color(1.0f, 1.0f, 1.0f, 0.1f),
+                    _ => throw new ArgumentException("No brush color defined for thise mode.", nameof(mode))
                 };
             }
             #endregion

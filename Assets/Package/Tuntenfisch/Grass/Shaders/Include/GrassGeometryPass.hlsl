@@ -406,15 +406,31 @@ void CreateBlade(GrassGeometry grassGeometry, inout TriangleStream<GrassFragment
     outputStream.RestartStrip();
 }
 
+#if defined(_DISTANCE_CULLING_ENABLED)
+    int DistanceCullBlades(GrassGeometry grassGeometry)
+    {
+        float distanceToCullingCamera = length(_CullingCameraPosition - grassGeometry.PositionWS);
+        float smoothDistanceCullingFactor = 1.0f - smoothstep(_SmoothDistanceCullingRange.x, _SmoothDistanceCullingRange.y, distanceToCullingCamera);
+
+        return (int)round(smoothDistanceCullingFactor * BLADE_COUNT);
+    }
+#endif
+
 [maxvertexcount(BLADE_COUNT * 2 * (SEGMENT_COUNT + 1))]
 void GrassGeometryPass(point GrassGeometry inputs[1], inout TriangleStream<GrassFragment> outputStream)
 {
     // Use some arbitrary value depending on the object position of the vertex as the seed.
     PRNG prng = PRNG::Create(inputs[0].GetSeed());
 
+    #if defined(_DISTANCE_CULLING_ENABLED)
+        int bladeCount = DistanceCullBlades(inputs[0]);
+    #else
+        int bladeCount = BLADE_COUNT;
+    #endif
+
     // For each vertex of the original mesh, we create BLADE_COUNT grass blades.
     // Each blade will be positioned randomly on a disc centered on the given grassGeometry vertex and spanning the xz-axes in mesh tangent space.
-    for (int blade = 0; blade < BLADE_COUNT; blade++)
+    for (int blade = 0; blade < bladeCount; blade++)
     {
         CreateBlade(inputs[0], outputStream, prng);
     }

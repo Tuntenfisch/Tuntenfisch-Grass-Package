@@ -30,10 +30,6 @@ Shader "Tuntenfisch/Grass/Grass"
         [ShowIf(_MESH_CONTAINS_BLADE_PROPERTIES, true)]_BladeSpreadVariance ("Blade Spread Variance", Range(0.0, 1.0)) = 0.125
 
         // Interaction Properties
-        [HideInInspector]_InteractionTexture ("Interaction Texture", 2D) = "clear" { }
-        [HideInInspector]_InteractionDepthTexture ("Interaction Depth Texture", 2D) = "clear" { }
-        [HideInInspector]_InteractionAreaSize ("Interaction Area Size", Vector) = (0.0, 0.0, 0.0, 0.0)
-        [HideInInspector]_InteractionCameraClippingPlanes ("Interaction Camera Clipping Planes", Vector) = (0.0, 0.0, 0.0, 0.0)
         _InteractionTilt ("Interaction Tilt", Range(0.0, 90.0)) = 30.0
 
         // Wind Properties
@@ -93,11 +89,19 @@ Shader "Tuntenfisch/Grass/Grass"
         #endif
 
         // Interaction Properties
-        float2 _InteractionAreaSize;                // (interaction area size, inverse interaction area size)
-        float2 _InteractionCameraClippingPlanes;    // (distance to near clip plane, distance to far clip plane)
-        float _InteractionTilt;
-        float4x4 _InteractionToWorldTransform;
-        float4x4 _WorldToInteractionTransform;
+        #if defined(_GRASS_INTERACTION_ENABLED)
+            float2 _InteractionAreaSize;                // (interaction area size, inverse interaction area size)
+            float2 _InteractionCameraClippingPlanes;    // (distance to near clip plane, distance to far clip plane)
+            float _InteractionTilt;
+            float4x4 _InteractionToWorldTransform;
+            float4x4 _WorldToInteractionTransform;
+        #endif
+
+        // Distance Culling Properties
+        #if defined(_DISTANCE_CULLING_ENABLED)
+            float3 _CullingCameraPosition;
+            float2 _SmoothDistanceCullingRange;
+        #endif
 
         // Wind Properties
         float3 _WindRightDirection;
@@ -141,6 +145,7 @@ Shader "Tuntenfisch/Grass/Grass"
 
             // Custom Keywords
             #pragma multi_compile _ _GRASS_INTERACTION_ENABLED
+            #pragma multi_compile _ _DISTANCE_CULLING_ENABLED
             #pragma multi_compile _ _MESH_CONTAINS_BLADE_PROPERTIES
 
             #pragma vertex GrassVertexPass
@@ -169,6 +174,7 @@ Shader "Tuntenfisch/Grass/Grass"
 
             // Custom Keywords
             #pragma multi_compile _ _GRASS_INTERACTION_ENABLED
+            #pragma multi_compile _ _DISTANCE_CULLING_ENABLED
             #pragma multi_compile _ _MESH_CONTAINS_BLADE_PROPERTIES
 
             #pragma vertex GrassVertexPass
