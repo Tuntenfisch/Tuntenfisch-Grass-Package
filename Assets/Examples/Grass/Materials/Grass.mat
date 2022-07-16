@@ -23,6 +23,8 @@ Material:
   m_Name: Grass
   m_Shader: {fileID: 4800000, guid: 6aa1bd46582594b43b011f272760af40, type: 3}
   m_ValidKeywords:
+  - _DISTANCE_CULLING_ENABLED
+  - _GRASS_INTERACTION_ENABLED
   - _MESH_CONTAINS_BLADE_PROPERTIES
   m_InvalidKeywords: []
   m_LightmapFlags: 4
